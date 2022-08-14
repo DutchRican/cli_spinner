@@ -38,7 +38,8 @@ class Spinner {
   /// Set a new spinner type while active already.
   setSpinnerType(SpinnerType spinnerType) {
     _spinnerType = spinnerType.value;
-    var spinner = _availableSpinners.firstWhere((item) => item.name == _spinnerType);
+    var spinner =
+        _availableSpinners.firstWhere((item) => item.name == _spinnerType);
     _spinnerIndex = 0;
     _spinIndicator = spinner;
     _timer?.cancel();
@@ -48,7 +49,8 @@ class Spinner {
   /// start the spinner animation, this uses an interval to update
   start() {
     _spinnerIndex = 0;
-    var spinner = _availableSpinners.firstWhere((item) => item.name == _spinnerType);
+    var spinner =
+        _availableSpinners.firstWhere((item) => item.name == _spinnerType);
     _spinIndicator = spinner;
     _isBusy = true;
     _setTimer(spinner.interval);
