@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cli_spinner/cli_spinner.dart';
+import 'package:cli_spinner/src/terminal.dart';
 import 'package:path/path.dart' as p;
-import 'package:ansi_escapes/ansi_escapes.dart';
 import 'package:cli_spinner/src/spinners/models/spin_indicator.dart';
 
 class Spinner {
@@ -19,17 +19,23 @@ class Spinner {
 
   late String _message;
 
-  Spinner(this._message) {
-    _isBusy = false;
-    _spinnerType = SpinnerType.standard.value;
-    _availableSpinners = _getAvailableSpinners();
-  }
+  /// Constructor taking message and SpinnerType
   Spinner.type(this._message, SpinnerType spinnerType) {
+    _initValues(spinnerType);
+  }
+
+  /// Constructor taking a message as string, setting the default spinner named standard
+  Spinner(this._message) {
+    _initValues(SpinnerType.standard);
+  }
+
+  _initValues(SpinnerType spinnerType) {
     _isBusy = false;
     _spinnerType = spinnerType.value;
     _availableSpinners = _getAvailableSpinners();
   }
 
+  /// Set a new spinner type while active already.
   setSpinnerType(SpinnerType spinnerType) {
     _spinnerType = spinnerType.value;
     var spinner = _availableSpinners.firstWhere((item) => item.name == _spinnerType);
@@ -39,6 +45,7 @@ class Spinner {
     _setTimer(spinner.interval);
   }
 
+  /// start the spinner animation, this uses an interval to update
   start() {
     _spinnerIndex = 0;
     var spinner = _availableSpinners.firstWhere((item) => item.name == _spinnerType);
@@ -47,18 +54,19 @@ class Spinner {
     _setTimer(spinner.interval);
   }
 
+  /// canceling the the internal timer and showing the last set message
   stop() {
-    _timer?.cancel();
-    stdout.writeln('${ansiEscapes.eraseLine}\r$_message ${ansiEscapes.cursorShow}');
+    if (_isBusy) _timer?.cancel();
+    Terminal.writeFinalMessage(_message);
   }
 
+  /// update the message shown to the users
   updateMessage(String message) {
     _message = message;
   }
 
   void _updateStatus() {
-    stdout.write(
-        '${ansiEscapes.eraseLine}\r${_spinIndicator.frames[_spinnerIndex]} $_message  ${ansiEscapes.cursorHide}');
+    Terminal.writeMessage(_message, _spinIndicator.frames, _spinnerIndex);
     _spinnerIndex = (_spinnerIndex + 1) % _spinIndicator.frames.length;
   }
 
