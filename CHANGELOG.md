@@ -8,3 +8,8 @@
 - Bit more DOC information
 - Terminal class for the output to the terminal
 - Cleaned up the constructors
+
+## 1.0.2
+
+- dart format
+- more doc info

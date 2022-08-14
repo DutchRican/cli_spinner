@@ -29,6 +29,7 @@ class Spinner {
     _initValues(SpinnerType.standard);
   }
 
+  /// setting the initial values
   _initValues(SpinnerType spinnerType) {
     _isBusy = false;
     _spinnerType = spinnerType.value;
@@ -67,17 +68,21 @@ class Spinner {
     _message = message;
   }
 
+  /// outputting to the user what the current message is
+  /// updating the spinner frame index
   void _updateStatus() {
     Terminal.writeMessage(_message, _spinIndicator.frames, _spinnerIndex);
     _spinnerIndex = (_spinnerIndex + 1) % _spinIndicator.frames.length;
   }
 
+  /// setting the timer for the specific interval
   void _setTimer(int interval) {
     _timer = Timer.periodic(Duration(milliseconds: interval), (timer) {
       _updateStatus();
     });
   }
 
+  /// reading the available spinners from the json file
   List<SpinIndicator> _getAvailableSpinners() {
     String path = p.join(p.current, 'lib', 'src', 'spinners', 'spinners.json');
     String raw = File(path).readAsStringSync();
